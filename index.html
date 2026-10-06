@@ -2,176 +2,135 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Моніторинг — Доброслав</title>
 
-<title>Моніторинг повітряних цілей — Доброслав</title>
-
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
+html,body,#map{
+  width:100%;
+  height:100%;
+  margin:0;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  overflow:hidden;
+}
+#map{
+  position:absolute;
+  inset:0;
+  background:#dfe7eb;
+}
+.panel{
+  position:absolute;
+  z-index:1000;
+  top:16px;
+  left:16px;
+  width:350px;
+  max-width:calc(100vw - 32px);
+  padding:18px;
+  box-sizing:border-box;
+  background:rgba(20,20,20,.92);
+  color:white;
+  border-radius:16px;
+  box-shadow:0 6px 24px rgba(0,0,0,.4);
+}
+h1{
+  margin:0 0 5px;
+  font-size:22px;
+}
+.sub{
+  color:#cbd5e1;
+  font-size:14px;
+  margin-bottom:14px;
+}
+.status{
+  padding:11px;
+  border-radius:10px;
+  background:#14532d;
+  margin-bottom:14px;
+  font-size:14px;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border:0;
+  border-radius:10px;
+  font-size:16px;
+  color:white;
+  background:#2563eb;
+}
+button.secondary{
+  background:#4b5563;
+}
+.legend{
+  border-top:1px solid #555;
+  margin-top:14px;
+  padding-top:12px;
+  line-height:1.9;
+  font-size:14px;
+}
+.dot{
+  display:inline-block;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  margin-right:8px;
+}
+.green{background:#22c55e}
+.red{background:#ef4444}
+.yellow{background:#facc15}
+.orange{background:#f59e0b}
+.blue{background:#38bdf8}
 
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #111;
-        color: white;
-        overflow: hidden;
-    }
+.infoBox{
+  margin-top:12px;
+  padding:10px;
+  background:#1f2937;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.5;
+}
 
-    #map {
-        width: 100vw;
-        height: 100vh;
-    }
+.target{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:#ef4444;
+  border:4px solid white;
+  box-shadow:0 0 14px #ef4444;
+}
+.town{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:#22c55e;
+  border:4px solid white;
+  box-shadow:0 0 14px #22c55e;
+}
 
-    .panel {
-        position: absolute;
-        z-index: 1000;
-        top: 15px;
-        left: 15px;
-        width: 330px;
-        max-width: calc(100vw - 30px);
-        background: rgba(20,20,20,0.94);
-        border-radius: 12px;
-        padding: 15px;
-        box-shadow: 0 4px 20px rgba(0,0,0,.5);
-    }
+.version{
+  position:absolute;
+  z-index:900;
+  left:18px;
+  bottom:18px;
+  background:rgba(20,20,20,.85);
+  color:white;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:12px;
+}
 
-    .title {
-        font-size: 19px;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-
-    .subtitle {
-        font-size: 13px;
-        color: #bbb;
-        margin-bottom: 12px;
-    }
-
-    .status {
-        padding: 9px;
-        border-radius: 8px;
-        background: #333;
-        margin-bottom: 12px;
-        font-size: 14px;
-    }
-
-    .status.ok {
-        background: #173d25;
-    }
-
-    button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 7px;
-        border: none;
-        border-radius: 8px;
-        background: #2d6cdf;
-        color: white;
-        font-size: 15px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background: #3d7bf0;
-    }
-
-    button.secondary {
-        background: #444;
-    }
-
-    .legend {
-        margin-top: 13px;
-        border-top: 1px solid #444;
-        padding-top: 10px;
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    .dot {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        margin-right: 6px;
-    }
-
-    .red {
-        background: red;
-    }
-
-    .yellow {
-        background: #ffd400;
-    }
-
-    .blue {
-        background: #2495ff;
-    }
-
-    .green {
-        background: #22c55e;
-    }
-
-    .target-label {
-        background: rgba(0,0,0,.8);
-        color: white;
-        border: 1px solid #666;
-        border-radius: 5px;
-        padding: 3px 6px;
-        font-size: 12px;
-    }
-
-    .target-icon {
-        width: 28px;
-        height: 28px;
-        background: #e11;
-        border: 3px solid white;
-        border-radius: 50%;
-        box-shadow: 0 0 12px red;
-    }
-
-    .dobroslav-icon {
-        width: 20px;
-        height: 20px;
-        background: #22c55e;
-        border: 3px solid white;
-        border-radius: 50%;
-        box-shadow: 0 0 12px #22c55e;
-    }
-
-    .info-box {
-        position: absolute;
-        z-index: 1000;
-        bottom: 20px;
-        left: 20px;
-        background: rgba(20,20,20,.9);
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-    }
-
-    @media (max-width: 600px) {
-        .panel {
-            width: 290px;
-            top: 10px;
-            left: 10px;
-        }
-
-        .title {
-            font-size: 16px;
-        }
-
-        button {
-            padding: 8px;
-            font-size: 14px;
-        }
-    }
+@media(max-width:700px){
+  .panel{
+    width:300px;
+    padding:14px;
+  }
+  h1{font-size:18px}
+  button{font-size:14px;padding:10px}
+}
 </style>
 </head>
 
@@ -180,412 +139,225 @@
 <div id="map"></div>
 
 <div class="panel">
+  <h1>Моніторинг повітряної обстановки</h1>
+  <div class="sub">Доброславська територіальна громада</div>
 
-    <div class="title">
-        Моніторинг повітряних цілей
-    </div>
+  <div id="status" class="status">
+    ● Система запущена — тестовий режим
+  </div>
 
-    <div class="subtitle">
-        Доброславська територіальна громада
-    </div>
+  <button onclick="addTarget()">+ Додати тестову ціль</button>
+  <button class="secondary" onclick="clearTargets()">Очистити цілі</button>
+  <button class="secondary" onclick="centerDobroslav()">Показати Доброслав</button>
 
-    <div id="status" class="status ok">
-        ● Система запущена
-    </div>
+  <div id="info" class="infoBox">
+    Цілей на карті: 0
+  </div>
 
-    <button onclick="addTestTarget()">
-        + Додати тестову ціль
-    </button>
-
-    <button onclick="clearTargets()" class="secondary">
-        Очистити цілі
-    </button>
-
-    <button onclick="centerDobroslav()" class="secondary">
-        Показати Доброслав
-    </button>
-
-    <div class="legend">
-
-        <div>
-            <span class="dot green"></span>
-            Доброслав
-        </div>
-
-        <div>
-            <span class="dot red"></span>
-            Повітряна ціль
-        </div>
-
-        <div>
-            <span class="dot yellow"></span>
-            Зона уваги
-        </div>
-
-        <div>
-            <span class="dot blue"></span>
-            Умовний напрямок руху
-        </div>
-
-    </div>
-
+  <div class="legend">
+    <div><span class="dot green"></span>Доброслав</div>
+    <div><span class="dot red"></span>Тестова повітряна ціль</div>
+    <div><span class="dot yellow"></span>20 км</div>
+    <div><span class="dot orange"></span>50 км</div>
+    <div><span class="dot blue"></span>Умовний напрямок</div>
+  </div>
 </div>
 
-<div class="info-box">
-    Версія 1.0 — тестовий режим
-</div>
+<div class="version">Версія 2.2 — тестовий режим</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+const DOBROSLAV = [46.82,30.95];
 
-/*
-====================================================
-  ОСНОВНІ КООРДИНАТИ
-====================================================
-
-  Доброслав, Одеська область
-*/
-
-const DOBROSLAV = [46.82, 30.95];
-
-
-/*
-====================================================
-  СТВОРЕННЯ КАРТИ
-====================================================
-*/
-
-const map = L.map('map', {
-    zoomControl: true
-}).setView(DOBROSLAV, 10);
-
-
-/*
-====================================================
-  КАРТА OPENSTREETMAP
-====================================================
-*/
+const map = L.map("map",{
+  zoomControl:true
+}).setView(DOBROSLAV,9);
 
 L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-    }
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    maxZoom:19,
+    attribution:"© OpenStreetMap contributors"
+  }
 ).addTo(map);
 
-
-/*
-====================================================
-  МАРКЕР ДОБРОСЛАВА
-====================================================
-*/
-
-const dobroslavIcon = L.divIcon({
-    className: '',
-    html: '<div class="dobroslav-icon"></div>',
-    iconSize: [20,20],
-    iconAnchor: [10,10]
+const townIcon = L.divIcon({
+  className:"",
+  html:'<div class="town"></div>',
+  iconSize:[30,30],
+  iconAnchor:[15,15]
 });
-
-const dobroslavMarker = L.marker(
-    DOBROSLAV,
-    {
-        icon: dobroslavIcon
-    }
-).addTo(map);
-
-dobroslavMarker.bindPopup(`
-    <b>Доброслав</b><br>
-    Одеська область<br>
-    Центр моніторингу
-`);
-
-
-/*
-====================================================
-  ЗОНИ НАВКОЛО ДОБРОСЛАВА
-====================================================
-*/
-
-/* 20 км */
-
-L.circle(
-    DOBROSLAV,
-    {
-        radius: 20000,
-        color: '#ffd400',
-        weight: 2,
-        fillColor: '#ffd400',
-        fillOpacity: 0.04
-    }
-).addTo(map);
-
-
-/* 50 км */
-
-L.circle(
-    DOBROSLAV,
-    {
-        radius: 50000,
-        color: '#ff9900',
-        weight: 1,
-        fillColor: '#ff9900',
-        fillOpacity: 0.02
-    }
-).addTo(map);
-
-
-/*
-====================================================
-  ТЕСТОВІ НАПРЯМКИ
-====================================================
-
-  Це лише графічна демонстрація.
-  Це НЕ реальні траєкторії.
-*/
-
-
-const directions = [
-
-    {
-        name: "Північний напрямок",
-        points: [
-            [47.20,30.90],
-            [47.05,30.92],
-            [46.95,30.94],
-            [46.82,30.95]
-        ]
-    },
-
-    {
-        name: "Північно-східний напрямок",
-        points: [
-            [47.05,31.40],
-            [46.98,31.25],
-            [46.90,31.10],
-            [46.82,30.95]
-        ]
-    },
-
-    {
-        name: "Східний напрямок",
-        points: [
-            [46.82,31.45],
-            [46.82,31.25],
-            [46.82,31.05],
-            [46.82,30.95]
-        ]
-    },
-
-    {
-        name: "Південний напрямок",
-        points: [
-            [46.45,30.95],
-            [46.55,30.95],
-            [46.68,30.95],
-            [46.82,30.95]
-        ]
-    }
-
-];
-
-
-directions.forEach(direction => {
-
-    L.polyline(
-        direction.points,
-        {
-            color: '#2495ff',
-            weight: 3,
-            opacity: 0.55,
-            dashArray: '10,10'
-        }
-    )
-    .addTo(map)
-    .bindPopup(direction.name);
-
-});
-
-
-/*
-====================================================
-  СПИСОК ЦІЛЕЙ
-====================================================
-*/
-
-let targets = [];
-
-
-/*
-====================================================
-  СТВОРЕННЯ ІКОНКИ ЦІЛІ
-====================================================
-*/
 
 const targetIcon = L.divIcon({
-
-    className: '',
-
-    html: '<div class="target-icon"></div>',
-
-    iconSize: [28,28],
-
-    iconAnchor: [14,14]
-
+  className:"",
+  html:'<div class="target"></div>',
+  iconSize:[34,34],
+  iconAnchor:[17,17]
 });
 
+const town = L.marker(DOBROSLAV,{
+  icon:townIcon
+}).addTo(map);
 
-/*
-====================================================
-  ДОДАВАННЯ ТЕСТОВОЇ ЦІЛІ
-====================================================
-*/
-
-function addTestTarget() {
-
-    const startLat =
-        DOBROSLAV[0] +
-        (Math.random() * 0.8 - 0.4);
-
-    const startLng =
-        DOBROSLAV[1] +
-        (Math.random() * 1.0 - 0.5);
-
-
-    const marker = L.marker(
-        [startLat,startLng],
-        {
-            icon: targetIcon,
-            draggable: true
-        }
-    ).addTo(map);
-
-
-    const id = targets.length + 1;
-
-
-    marker.bindPopup(`
-        <b>Повітряна ціль №${id}</b><br>
-        Тестовий об'єкт<br>
-        Координати:<br>
-        ${startLat.toFixed(4)},
-        ${startLng.toFixed(4)}
-    `);
-
-
-    marker.bindTooltip(
-        `Ціль №${id}`,
-        {
-            permanent: true,
-            direction: 'top',
-            className: 'target-label'
-        }
-    );
-
-
-    targets.push(marker);
-
-
-    updateStatus(
-        `● Додано тестову ціль №${id}`
-    );
-
-}
-
-
-/*
-====================================================
-  ОЧИЩЕННЯ ЦІЛЕЙ
-====================================================
-*/
-
-function clearTargets() {
-
-    targets.forEach(
-        marker => map.removeLayer(marker)
-    );
-
-    targets = [];
-
-    updateStatus(
-        '● Цілі очищено'
-    );
-
-}
-
-
-/*
-====================================================
-  ЦЕНТРУВАННЯ НА ДОБРОСЛАВІ
-====================================================
-*/
-
-function centerDobroslav() {
-
-    map.setView(
-        DOBROSLAV,
-        10
-    );
-
-    dobroslavMarker.openPopup();
-
-}
-
-
-/*
-====================================================
-  СТАТУС
-====================================================
-*/
-
-function updateStatus(text) {
-
-    document.getElementById(
-        'status'
-    ).innerHTML = text;
-
-}
-
-
-/*
-====================================================
-  КЛІК ПО КАРТІ
-====================================================
-
-  Натискання на карту показує координати.
-*/
-
-map.on('click', function(e) {
-
-    const lat =
-        e.latlng.lat.toFixed(5);
-
-    const lng =
-        e.latlng.lng.toFixed(5);
-
-    L.popup()
-        .setLatLng(e.latlng)
-        .setContent(`
-            <b>Координати</b><br>
-            ${lat}, ${lng}
-        `)
-        .openOn(map);
-
+town.bindTooltip("Доброслав",{
+  permanent:true,
+  direction:"right"
 });
 
-
-/*
-====================================================
-  ЗАПУСК
-====================================================
-*/
-
-updateStatus(
-    '● Система запущена — тестовий режим'
+town.bindPopup(
+  "<b>Доброслав</b><br>Центр моніторингу"
 );
 
+L.circle(DOBROSLAV,{
+  radius:20000,
+  color:"#facc15",
+  weight:3,
+  fillColor:"#facc15",
+  fillOpacity:.04
+}).addTo(map);
+
+L.circle(DOBROSLAV,{
+  radius:50000,
+  color:"#f59e0b",
+  weight:2,
+  fillOpacity:0
+}).addTo(map);
+
+const directionLines = [
+  [[47.35,30.95],DOBROSLAV],
+  [[46.82,31.75],DOBROSLAV],
+  [[46.20,30.95],DOBROSLAV]
+];
+
+directionLines.forEach(points=>{
+  L.polyline(points,{
+    color:"#38bdf8",
+    weight:3,
+    dashArray:"10,10",
+    opacity:.65
+  }).addTo(map);
+});
+
+let targets=[];
+let targetNumber=0;
+
+function distanceKm(a,b){
+  const R=6371;
+  const dLat=(b[0]-a[0])*Math.PI/180;
+  const dLon=(b[1]-a[1])*Math.PI/180;
+  const lat1=a[0]*Math.PI/180;
+  const lat2=b[0]*Math.PI/180;
+
+  const x=
+    Math.sin(dLat/2)*Math.sin(dLat/2)+
+    Math.sin(dLon/2)*Math.sin(dLon/2)*
+    Math.cos(lat1)*Math.cos(lat2);
+
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+
+function updateInfo(){
+  document.getElementById("info").innerHTML=
+    "Цілей на карті: <b>"+targets.length+"</b>"+
+    "<br>Жовта зона: 20 км"+
+    "<br>Помаранчева зона: 50 км";
+}
+
+function updateTarget(marker,number){
+  const p=marker.getLatLng();
+  const d=distanceKm(
+    DOBROSLAV,
+    [p.lat,p.lng]
+  );
+
+  marker.bindTooltip(
+    "Ціль №"+number+" · "+d.toFixed(1)+" км",
+    {
+      permanent:true,
+      direction:"top",
+      offset:[0,-12]
+    }
+  );
+
+  marker.bindPopup(
+    "<b>Тестова ціль №"+number+"</b>"+
+    "<br>Відстань до Доброслава: <b>"+
+    d.toFixed(1)+" км</b>"+
+    "<br><br>Це демонстраційний об'єкт."
+  );
+}
+
+function addTarget(){
+  targetNumber++;
+
+  const angle=Math.random()*Math.PI*2;
+  const radius=.25+Math.random()*.45;
+
+  const lat=DOBROSLAV[0]+Math.cos(angle)*radius;
+  const lng=DOBROSLAV[1]+Math.sin(angle)*radius;
+
+  const marker=L.marker([lat,lng],{
+    icon:targetIcon,
+    draggable:true
+  }).addTo(map);
+
+  marker.targetNumber=targetNumber;
+
+  updateTarget(marker,targetNumber);
+
+  marker.on("drag",function(){
+    updateTarget(marker,marker.targetNumber);
+  });
+
+  marker.on("dragend",function(){
+    const p=marker.getLatLng();
+    const d=distanceKm(
+      DOBROSLAV,
+      [p.lat,p.lng]
+    );
+
+    document.getElementById("status").innerHTML=
+      "● Ціль №"+marker.targetNumber+
+      " — "+d.toFixed(1)+" км від Доброслава";
+  });
+
+  targets.push(marker);
+
+  document.getElementById("status").innerHTML=
+    "● Додано тестову ціль №"+targetNumber;
+
+  updateInfo();
+}
+
+function clearTargets(){
+  targets.forEach(marker=>{
+    map.removeLayer(marker);
+  });
+
+  targets=[];
+  targetNumber=0;
+
+  document.getElementById("status").innerHTML=
+    "● Тестові цілі очищено";
+
+  updateInfo();
+}
+
+function centerDobroslav(){
+  map.setView(DOBROSLAV,11);
+  town.openPopup();
+
+  document.getElementById("status").innerHTML=
+    "● Центр карти — Доброслав";
+}
+
+updateInfo();
+
+map.whenReady(function(){
+  document.getElementById("status").innerHTML=
+    "● Карта працює — тестовий режим";
+});
 </script>
 
 </body>
